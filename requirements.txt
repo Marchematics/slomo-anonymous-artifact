@@ -1,0 +1,10 @@
+httpx>=0.27
+openai>=1.40
+opencv-python-headless>=4.10
+Pillow>=10.0
+numpy>=1.26
+torch>=2.4
+transformers>=4.45
+accelerate>=0.34
+qwen-vl-utils>=0.0.8
+bitsandbytes>=0.43
