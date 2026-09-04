@@ -94,6 +94,13 @@ are part of the release tree.
 - `scripts/prepare_evalai_submission.py`: official CSV conversion and schema
   validation;
 - `scripts/audit_submission.py`: local coverage and non-empty-row audit;
-- `docs/technical_document.md`: concise technical description;
-- `docs/technical_document.tex`: two-page printable version.
+- `technical_document_eccv.tex`: ECCV 2026 anonymous review document;
+- `technical_document_eccv.pdf`: two-page body with references beginning on
+  page 3;
+- `technical_document_eccv.bib`: verified public-source bibliography;
+- `figures/figure_data.json`: traceable chart data;
+- `scripts/make_eccv_figures.py`: deterministic PDF chart generator.
 
+The ECCV template files (`eccv.sty`, `eccvabbrv.sty`, `llncs.cls`, and
+`splncs04.bst`) are included so the document can be compiled without a
+template search path.

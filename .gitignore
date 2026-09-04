@@ -11,6 +11,9 @@ __pycache__/
 *.fdb_latexmk
 *.out
 *.log
+*.bbl
+*.blg
+*.brf
 *.toc
 *.synctex.gz
 .env

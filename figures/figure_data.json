@@ -1,0 +1,14 @@
+{
+  "official_progress": {
+    "labels": ["Baseline", "Movie batch", "Complement", "Protected parent"],
+    "correct": [269, 339, 341, 343],
+    "total": 538,
+    "source": "Historical official SLoMO/EvalAI score chain recorded in the project audit"
+  },
+  "factor_audit": {
+    "labels": ["Joint, 16 frames", "Joint, no frames", "Joint, no consistency", "Independent questions", "Target16", "Dense48"],
+    "correct": [27, 24, 29, 18, 29, 30],
+    "total": 60,
+    "source": "Frozen six-movie local factor and visual-ceiling audits"
+  }
+}
