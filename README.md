@@ -2,7 +2,8 @@
 
 This repository releases a movie-level long-video question answering system
 for SLoMO. It contains the runner, submission utilities, configuration
-guidance, chart data, tests, and a two-page technical report.
+guidance, chart data, tests, and a two-page technical report with a third-page
+reference list.
 
 ## Method
 
@@ -21,7 +22,12 @@ state across questions. The runner accepts an OpenAI-compatible Responses
 endpoint.
 
 The final SLoMO submission by `Math` ranked first with `66.36%` accuracy and a
-`3.02` score.
+`3.02` score (`357/538` correct answers).
+
+The released protocol uses `gpt-5.6-luna` without fine-tuning, timestamped VTT
+transcripts from faster-whisper large-v3-turbo, and 16 centered uniformly
+spaced chronological frames. Each request includes every question from one
+movie and returns a question-ID keyed JSON answer bank.
 
 ## Reproduce
 
@@ -82,10 +88,12 @@ The live requirements are documented at:
   validation;
 - `scripts/audit_submission.py`: local coverage and non-empty-row audit;
 - `technical_report.tex`: clean technical report using the ECCV style files;
-- `technical_report.pdf`: two-page ECCV-styled technical report;
+- `technical_report.pdf`: two-page main report with third-page references;
 - `docs/technical_report.md`: Markdown version of the report;
 - `figures/figure_data.json`: traceable chart data;
 - `figures/evidence_dashboard.pdf`: compact five-panel vector evidence figure;
+- `figures/system_architecture.pdf`: movie-level joint-inference architecture;
+- `references.bib`: verified bibliography for the technical report;
 - `scripts/make_report_figures.py`: deterministic PDF chart generator.
 
 The report uses ECCV typography and page geometry while presenting a compact

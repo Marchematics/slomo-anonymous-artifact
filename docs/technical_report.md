@@ -1,8 +1,6 @@
 # Movie-Level Joint Inference for Open-Ended Long-Video QA
 
-The PDF uses the ECCV style files for typography and page geometry. It is a
-technical/reproducibility document, not an ECCV submission template: there is
-no paper ID, review line numbering, or submission metadata.
+Jiahao Zhang, Xinling Wen, and Yu Chen
 
 ## System Overview
 
@@ -10,7 +8,7 @@ The movie is the unit of context: all questions for one film are answered in a
 shared multimodal request. This preserves aliases, changing relationships,
 event order, causes, and ending state across a question set and produces one
 coherent answer bank. The final SLoMO submission ranked first with 66.36%
-accuracy and a 3.02 score.
+accuracy and a 3.02 score (357/538).
 
 ## Method
 
@@ -21,11 +19,11 @@ passed together to the answerer:
 (E_m, Q_m) -> {a_m,1, a_m,2, ..., a_m,n}
 ```
 
-The evidence packet contains a timestamped transcript and chronological frames.
-The prompt requests concise English answers with exact question IDs, consistent
-names and event structure, and no unsupported visual details. Frames are
-resized, JPEG encoded, and marked with timestamps. Long transcripts use a
-deterministic head-and-tail bound.
+The evidence packet contains a timestamped VTT transcript produced by
+faster-whisper large-v3-turbo and 16 centered uniformly spaced chronological
+frames. Frames are resized to a 512-pixel maximum side, JPEG encoded at quality
+82, and marked with timestamps. The answerer is `gpt-5.6-luna`, run zero-shot
+with temperature 0, high reasoning effort, and a 5,000-token budget.
 
 ## Inference Pipeline
 
@@ -45,9 +43,8 @@ The runner uses an OpenAI-compatible Responses endpoint. The conversion and
 audit utilities produce a complete `question_id,prediction` CSV with one
 answer for every requested ID.
 
-Core settings are 16 chronological frames, a 512-pixel maximum frame side,
-JPEG quality 82, a timestamped transcript, temperature 0, high reasoning
-effort, and one JSON object per movie.
+Core dependencies are Python 3.10+, OpenAI SDK, HTTPX, OpenCV, Pillow, and
+Matplotlib. No fine-tuning is used.
 
 ## Results and Ablations
 
@@ -61,6 +58,15 @@ receives the same evidence and questions. GPT-5.6-Luna reaches 74 correct
 answers.
 The no-frame, Target16, and Dense48 conditions quantify the visual
 configurations around the shared movie context.
+
+## Evaluation Protocol
+
+- Final leaderboard: 50 movies and 538 questions, scored by the official SLoMO
+  evaluation.
+- Factor study: six frozen movies and 60 questions, scored with a fixed
+  Qwen3-VL-32B semantic evaluator.
+- Source study: 14 movies and 141 questions, with shared evidence and question
+  sets for each source, scored with the same fixed evaluator.
 
 ## Public Sources
 

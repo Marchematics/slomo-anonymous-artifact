@@ -15,6 +15,7 @@ import matplotlib
 
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
+from matplotlib.patches import FancyArrowPatch, FancyBboxPatch
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -89,7 +90,7 @@ def progress(ax) -> None:
     ax.set_xticks(x, labels)
     ax.set_ylabel("Correct / 538")
     panel_title(ax, "a", "Development trajectory")
-    style(ax, ylim=(258, 352), ticks=[270, 310, 350])
+    style(ax, ylim=(258, 365), ticks=[270, 310, 350])
 
 
 def bar_panel(
@@ -168,5 +169,60 @@ def dashboard() -> None:
     plt.close(fig)
 
 
+def architecture_box(ax, x: float, y: float, width: float, height: float, label: str, fill: str) -> None:
+    patch = FancyBboxPatch(
+        (x, y),
+        width,
+        height,
+        boxstyle="round,pad=0.018,rounding_size=0.035",
+        linewidth=0.8,
+        edgecolor="#64748B",
+        facecolor=fill,
+    )
+    ax.add_patch(patch)
+    ax.text(x + width / 2, y + height / 2, label, ha="center", va="center", color=DARK, fontsize=7.2, fontweight="medium")
+
+
+def architecture_arrow(ax, start: tuple[float, float], end: tuple[float, float]) -> None:
+    ax.add_patch(
+        FancyArrowPatch(
+            start,
+            end,
+            arrowstyle="-|>",
+            mutation_scale=10,
+            linewidth=1.0,
+            color="#64748B",
+        )
+    )
+
+
+def architecture() -> None:
+    fig, ax = plt.subplots(figsize=(7.45, 1.5))
+    ax.set_xlim(0, 10)
+    ax.set_ylim(0, 3)
+    ax.axis("off")
+
+    architecture_box(ax, 0.15, 0.83, 1.48, 1.2, "SF20K movie\nand all questions", "#F2F2F2")
+    architecture_box(ax, 2.18, 1.72, 1.82, 0.72, "Timestamped VTT\nASR transcript", "#E8F4FB")
+    architecture_box(ax, 2.18, 0.54, 1.82, 0.72, "16 centered uniform\nchronological frames", "#E8F4FB")
+    architecture_box(ax, 4.62, 0.83, 2.03, 1.2, "Joint movie request\nshared evidence + all Qs", "#E8F4FB")
+    architecture_box(ax, 7.22, 0.83, 1.2, 1.2, "GPT-5.6-\nLuna\nzero-shot", "#FFF2E5")
+    architecture_box(ax, 8.86, 0.83, 1.02, 1.2, "JSON bank\n→ CSV", "#E9F6EE")
+
+    architecture_arrow(ax, (1.63, 1.43), (2.18, 2.08))
+    architecture_arrow(ax, (1.63, 1.43), (2.18, 0.90))
+    architecture_arrow(ax, (4.0, 2.08), (4.62, 1.57))
+    architecture_arrow(ax, (4.0, 0.90), (4.62, 1.29))
+    architecture_arrow(ax, (6.65, 1.43), (7.22, 1.43))
+    architecture_arrow(ax, (8.42, 1.43), (8.86, 1.43))
+
+    ax.text(3.08, 2.75, "Evidence construction", ha="center", va="center", fontsize=6.8, color="#475569", fontweight="bold")
+    ax.text(5.63, 2.75, "Movie-level inference", ha="center", va="center", fontsize=6.8, color="#475569", fontweight="bold")
+    ax.text(9.36, 2.75, "Validated output", ha="center", va="center", fontsize=6.8, color="#475569", fontweight="bold")
+    fig.savefig(ROOT / "figures" / "system_architecture.pdf", bbox_inches="tight", pad_inches=0.01)
+    plt.close(fig)
+
+
 if __name__ == "__main__":
     dashboard()
+    architecture()

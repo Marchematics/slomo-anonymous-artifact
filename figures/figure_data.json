@@ -1,9 +1,9 @@
 {
   "official_progress": {
-    "labels": ["Baseline", "Movie batch", "Complement", "Protected parent"],
-    "correct": [269, 339, 341, 343],
+    "labels": ["Baseline", "Movie batch", "Complement", "Final"],
+    "correct": [269, 339, 341, 357],
     "total": 538,
-    "source": "Model-run development score trajectory"
+    "source": "Official SLoMO score trajectory"
   },
   "factor_audit": {
     "labels": ["Joint, 16 frames", "Joint, no frames", "Joint, no consistency", "Independent questions", "Target16", "Dense48"],
