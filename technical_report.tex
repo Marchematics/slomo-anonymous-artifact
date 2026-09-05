@@ -26,39 +26,41 @@
 \maketitle
 
 \begin{abstract}
-This report describes a movie-level pipeline for open-ended long-video question answering. All questions for one film share a timestamped transcript and chronological visual observations, allowing the answerer to maintain a coherent film-level context while producing one validated JSON answer bank. The release contains code, chart data, tests, and implementation notes; datasets, weights, predictions, credentials, and evaluation records remain external inputs.
+This report releases a movie-level pipeline for open-ended long-video question
+answering. Each film supplies a timestamped transcript, chronological visual
+observations, and all of its questions in one request, yielding a validated JSON
+answer bank. The release includes code, chart data, tests, and implementation
+notes. Data, weights, predictions, credentials, and evaluation records remain
+external inputs.
 \keywords{long-video QA \and movie-level inference \and reproducibility}
 \end{abstract}
 
 \section{System Overview}
 
-The movie is the context unit. A shared request lets the answerer preserve
-aliases, relationships, event order, causes, and ending state across questions.
-The release contains inference and submission utilities, tests, configuration
-guidance, and evidence-bound result plots. Videos, subtitles, weights,
-labels, generated answers, accounts, and machine paths are excluded.
+The movie is the context unit. A shared request preserves aliases,
+relationships, event order, causes, and ending state across questions. The
+release provides inference and submission utilities, tests, configuration
+guidance, and evidence-bound result plots. Private inputs remain external.
 
 \section{Method}
 
-For movie $m$, let $E_m$ be shared evidence and $Q_m$ its complete question
-set. The runner computes
-\[
-  (E_m,Q_m) \longrightarrow
-  \{a_{m,1},a_{m,2},\ldots,a_{m,n_m}\}.
-\]
-It groups rows by \texttt{video\_id}, parses timestamped subtitle cues,
-samples 16 chronological frames, and sends one request containing all movie
-questions. The model returns one JSON object keyed by the original IDs. The
-prompt requests concise English answers, cross-question consistency, and
-evidence support. Frames are JPEG encoded at a fixed maximum side and marked
-with timestamps; long transcripts use a head-and-tail bound.
+For movie $m$, shared evidence $E_m$ and its complete question set $Q_m$ are
+mapped to an answer bank $\{a_{m,1},\ldots,a_{m,n_m}\}$. The runner groups rows
+by \texttt{video\_id}, parses timestamped subtitle cues, samples 16
+chronological frames, and sends all movie questions in one request. The model
+returns a JSON object keyed by the original IDs. The prompt requests concise,
+evidence-supported English answers and cross-question consistency. Frames are
+JPEG encoded at a fixed maximum side and marked with timestamps. Long
+transcripts use a head-and-tail bound.
 
 \begin{center}
-  \includegraphics[width=.72\linewidth]{figures/official_progress.pdf}
+  \includegraphics[width=.99\linewidth]{figures/evidence_dashboard.pdf}
 
-  \small\textbf{Figure 1.} Historical official score chain. The large
-  discontinuity coincides with a movie-batched multimodal answer source;
-  later parent-preserving changes are smaller.
+  \small\textbf{Figure 1.} Evidence dashboard. (a) Historical official
+  score progression. (b) Joint movie context versus independent question
+  calls. (c--d) Visual configurations around the shared movie context.
+  (e) Frozen source comparison. Values are correct answers with the panel
+  denominator shown on the ordinate.
 \end{center}
 
 \section{Inference Pipeline}
@@ -83,10 +85,10 @@ private splits are supplied independently.
 \toprule
 Component & Configuration \\
 \midrule
-Context & One movie; all questions jointly \\
+Context & One movie, all questions jointly \\
 Evidence & Timestamped transcript + 16 chronological JPEG frames \\
-Frame encoding & Maximum side 512 px; JPEG quality 82 \\
-Generation & Temperature 0; high reasoning effort \\
+Frame encoding & Maximum side 512 px, JPEG quality 82 \\
+Generation & Temperature 0, high reasoning effort \\
 Output & JSON bank, then \texttt{question\_id,prediction} CSV \\
 \bottomrule
 \end{tabular}
@@ -94,19 +96,13 @@ Output & JSON bank, then \texttt{question\_id,prediction} CSV \\
 
 \section{Results and Ablations}
 
-Figure 2 reports a controlled six-movie, 60-question ablation using one
-semantic evaluator. Joint movie answering reaches 27/60, compared with 18/60
-for independent calls, a gain of nine correct answers. The shared movie
-context is the central factor measured in this study; the accompanying frame
-conditions quantify its operating visual configurations.
-
-\begin{center}
-  \includegraphics[width=.64\linewidth]{figures/factor_audit.pdf}
-
-  \small\textbf{Figure 2.} Controlled factor ablation on six movies and 60
-  questions. Blue is the direct movie-batched reference; gray and orange bars
-  are controlled variants.
-\end{center}
+Figure~1 organizes the released evidence into five compact studies. Joint
+movie answering reaches 27/60, compared with 18/60 for independent calls, a
+gain of nine correct answers. The same visual budget with chronological frames
+reaches 27/60, and targeted and dense frame configurations reach 29/60 and
+30/60. The source study anchors the chosen movie-batched answerer at 74/141.
+Together, these results motivate a coherent movie-level answer bank as the
+central inference unit.
 
 \paragraph{Operating scope.} The implementation targets movie-level QA with
 timestamped text, chronological visual observations, and an OpenAI-compatible

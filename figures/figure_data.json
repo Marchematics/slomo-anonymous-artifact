@@ -9,6 +9,12 @@
     "labels": ["Joint, 16 frames", "Joint, no frames", "Joint, no consistency", "Independent questions", "Target16", "Dense48"],
     "correct": [27, 24, 29, 18, 29, 30],
     "total": 60,
-    "source": "Frozen six-movie local factor and visual-ceiling audits"
+    "source": "Controlled six-movie factor and visual-configuration study"
+  },
+  "source_comparison": {
+    "labels": ["Luna", "VL-Flash", "VL-Plus", "3.8-Max", "Kimi-K3"],
+    "correct": [74, 66, 66, 62, 59],
+    "total": 141,
+    "source": "Frozen source comparison using the project semantic evaluator"
   }
 }

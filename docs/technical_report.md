@@ -58,13 +58,13 @@ effort, and one JSON object per movie.
 
 ## Results and Ablations
 
-The historical official score chain is included as a reference chart. It shows
-the large discontinuity associated with introducing a movie-batched multimodal
-answer source. The factor chart is a controlled six-movie, 60-question
-ablation: joint answering reaches 27/60, compared with 18/60 for independent
-question calls, a gain of nine correct answers. The no-frame, Target16, and
-Dense48 conditions quantify the visual configurations around this shared movie
-context.
+The report uses a compact five-panel evidence dashboard. It combines the
+historical official score chain, joint-context comparison, visual evidence,
+visual allocation, and a frozen source comparison. Joint answering reaches
+27/60, compared with 18/60 for independent question calls, a gain of nine
+correct answers. The same movie-batched source reaches 74/141 in the source
+study. The no-frame, Target16, and Dense48 conditions quantify the visual
+configurations around the shared movie context.
 
 ## Operating Scope
 

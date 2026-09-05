@@ -1,5 +1,10 @@
 #!/usr/bin/env python3
-"""Create the evidence-bound vector charts used by the technical report."""
+"""Create compact, evidence-bound vector figures for the technical report.
+
+The dashboard uses direct labels, small multiples, and restrained scientific
+styling inspired by figures4papers. It is original plotting code and consumes
+only the released values in ``figures/figure_data.json``.
+"""
 
 from __future__ import annotations
 
@@ -15,56 +20,153 @@ import matplotlib.pyplot as plt
 ROOT = Path(__file__).resolve().parents[1]
 DATA = json.loads((ROOT / "figures" / "figure_data.json").read_text(encoding="utf-8"))
 BLUE = "#0072B2"
-ORANGE = "#D55E00"
-GREY = "#6B7280"
+SKY = "#56B4E9"
+GREY = "#8A919B"
+DARK = "#1F2933"
+GRID = "#D9DEE5"
 
 
-def style(ax) -> None:
+plt.rcParams.update(
+    {
+        "font.family": "DejaVu Sans",
+        "font.size": 6.4,
+        "axes.titlesize": 6.8,
+        "axes.labelsize": 6.1,
+        "pdf.fonttype": 42,
+        "ps.fonttype": 42,
+        "svg.fonttype": "none",
+    }
+)
+
+
+def style(ax, *, ylim: tuple[float, float], ticks: list[float]) -> None:
     ax.spines["top"].set_visible(False)
     ax.spines["right"].set_visible(False)
-    ax.grid(axis="y", color="#D9DEE5", linewidth=0.6, alpha=0.85)
+    ax.spines["left"].set_color("#9AA3AF")
+    ax.spines["bottom"].set_color("#9AA3AF")
+    ax.grid(axis="y", color=GRID, linewidth=0.45, alpha=0.9)
     ax.set_axisbelow(True)
-    ax.tick_params(axis="both", labelsize=8, length=3)
+    ax.tick_params(axis="both", labelsize=5.5, length=2, pad=1.2)
+    ax.set_ylim(*ylim)
+    ax.set_yticks(ticks)
 
 
-def progress() -> None:
+def annotate_bars(ax, bars, *, offset: float) -> None:
+    for bar, value in zip(bars, [bar.get_height() for bar in bars]):
+        ax.text(
+            bar.get_x() + bar.get_width() / 2,
+            value + offset,
+            f"{int(value)}",
+            ha="center",
+            va="bottom",
+            color=DARK,
+            fontsize=5.8,
+            fontweight="medium",
+        )
+
+
+def panel_title(ax, label: str, title: str) -> None:
+    ax.set_title(f"({label}) {title}", loc="left", pad=3, fontweight="bold")
+
+
+def progress(ax) -> None:
     values = DATA["official_progress"]["correct"]
-    labels = ["Baseline", "Movie batch", "Complement", "Protected"]
-    fig, ax = plt.subplots(figsize=(6.3, 2.1))
+    labels = ["Base", "Batch", "+Comp.", "Final"]
     x = list(range(len(values)))
-    ax.plot(x, values, color=BLUE, marker="o", linewidth=2.2, markersize=5)
+    ax.plot(x, values, color=BLUE, marker="o", linewidth=1.5, markersize=3.6)
     ax.fill_between(x, values, [260] * len(values), color=BLUE, alpha=0.08)
     for index, value in enumerate(values):
-        ax.annotate(f"{value}/538", (index, value), xytext=(0, 8), textcoords="offset points", ha="center", fontsize=8, color="#111827")
+        ax.annotate(
+            str(value),
+            (index, value),
+            xytext=(0, 4),
+            textcoords="offset points",
+            ha="center",
+            fontsize=5.8,
+            color=DARK,
+            fontweight="medium",
+        )
     ax.set_xticks(x, labels)
-    ax.set_ylim(255, 350)
-    ax.set_ylabel("Correct predictions", fontsize=8)
-    ax.set_xlabel("System stage", fontsize=8)
-    style(ax)
-    fig.tight_layout(pad=0.5)
-    fig.savefig(ROOT / "figures" / "official_progress.pdf", bbox_inches="tight")
-    plt.close(fig)
+    ax.set_ylabel("Correct / 538")
+    panel_title(ax, "a", "Official progression")
+    style(ax, ylim=(258, 352), ticks=[270, 310, 350])
 
 
-def factors() -> None:
-    values = DATA["factor_audit"]["correct"]
-    labels = DATA["factor_audit"]["labels"]
-    fig, ax = plt.subplots(figsize=(6.3, 2.45))
-    y = list(range(len(values)))
-    colors = [BLUE, GREY, GREY, ORANGE, ORANGE, ORANGE]
-    bars = ax.barh(y, values, color=colors, height=0.62)
-    for bar, value in zip(bars, values):
-        ax.text(value + 0.4, bar.get_y() + bar.get_height() / 2, f"{value}/60", va="center", fontsize=8, color="#111827")
-    ax.set_yticks(y, labels)
-    ax.invert_yaxis()
-    ax.set_xlim(0, 35)
-    ax.set_xlabel("Semantically correct answers", fontsize=8)
-    style(ax)
-    fig.tight_layout(pad=0.5)
-    fig.savefig(ROOT / "figures" / "factor_audit.pdf", bbox_inches="tight")
+def bar_panel(
+    ax,
+    labels: list[str],
+    values: list[int],
+    colors: list[str],
+    *,
+    label: str,
+    title: str,
+    ylim: tuple[float, float],
+    ticks: list[float],
+    ylabel: str | None = None,
+) -> None:
+    x = list(range(len(values)))
+    bars = ax.bar(x, values, color=colors, width=0.66, edgecolor="none")
+    annotate_bars(ax, bars, offset=(ylim[1] - ylim[0]) * 0.025)
+    ax.set_xticks(x, labels)
+    if ylabel:
+        ax.set_ylabel(ylabel)
+    panel_title(ax, label, title)
+    style(ax, ylim=ylim, ticks=ticks)
+
+
+def dashboard() -> None:
+    factor = DATA["factor_audit"]["correct"]
+    source = DATA["source_comparison"]
+    fig, axes = plt.subplots(1, 5, figsize=(7.45, 1.85), constrained_layout=True)
+    fig.set_constrained_layout_pads(w_pad=2 / 72, h_pad=1 / 72, wspace=0.12, hspace=0.0)
+
+    progress(axes[0])
+    bar_panel(
+        axes[1],
+        ["Joint", "Indep."],
+        [factor[0], factor[3]],
+        [BLUE, GREY],
+        label="b",
+        title="Joint context",
+        ylim=(0, 32),
+        ticks=[0, 15, 30],
+        ylabel="Correct / 60",
+    )
+    bar_panel(
+        axes[2],
+        ["No\nframes", "Chrono16"],
+        [factor[1], factor[0]],
+        [GREY, BLUE],
+        label="c",
+        title="Visual evidence",
+        ylim=(0, 32),
+        ticks=[0, 15, 30],
+    )
+    bar_panel(
+        axes[3],
+        ["Chrono16", "Target16", "Dense48"],
+        [factor[0], factor[4], factor[5]],
+        [GREY, SKY, BLUE],
+        label="d",
+        title="Visual allocation",
+        ylim=(0, 32),
+        ticks=[0, 15, 30],
+    )
+    bar_panel(
+        axes[4],
+        ["Luna", "VL-F", "VL+", "3.8M", "K3"],
+        source["correct"],
+        [BLUE, GREY, GREY, GREY, GREY],
+        label="e",
+        title="Source study",
+        ylim=(0, 82),
+        ticks=[0, 40, 80],
+        ylabel="Correct / 141",
+    )
+
+    fig.savefig(ROOT / "figures" / "evidence_dashboard.pdf", bbox_inches="tight", pad_inches=0.01)
     plt.close(fig)
 
 
 if __name__ == "__main__":
-    progress()
-    factors()
+    dashboard()

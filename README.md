@@ -98,8 +98,14 @@ are part of the release tree.
 - `technical_report.pdf`: two-page ECCV-styled technical report;
 - `docs/technical_report.md`: Markdown version of the report;
 - `figures/figure_data.json`: traceable chart data;
+- `figures/evidence_dashboard.pdf`: compact five-panel vector evidence figure;
 - `scripts/make_report_figures.py`: deterministic PDF chart generator.
 
 The report uses the ECCV style files for typography and page geometry, but it
 is a technical/reproducibility document rather than an ECCV submission: it has
 no paper ID, review line numbers, submission metadata, or author block.
+
+The compact evidence dashboard uses direct labels, small multiples, and a
+color-safe scientific palette. Its visual conventions are informed by
+[figures4papers](https://github.com/ChenLiu-1996/figures4papers); the plotting
+code and all inputs in this repository are original and reproducible.
