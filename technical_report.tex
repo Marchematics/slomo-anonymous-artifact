@@ -82,29 +82,6 @@ zero-shot request. It silently builds a fact ledger and timeline before
 returning concise JSON answers with temperature 0, high reasoning effort, and a
 5,000-token budget.
 
-\section{Evaluation Protocol}
-
-Table~1 defines the denominators. Official SLoMO scoring ranks the
-538-question leaderboard, while both controlled studies use one fixed
-Qwen3-VL-32B semantic evaluator. Target16 selects answer-guided locations
-after answers are withheld from decoding. Dense48 uses label-free uniform
-coverage.
-
-\begin{center}
-\small
-\begin{tabular}{L{.20\linewidth}L{.25\linewidth}L{.43\linewidth}}
-\toprule
-Study & Scope & Evaluation \\
-\midrule
-Final leaderboard & 50 movies, 538 questions & Official 66.36\%, Rank 1, score 3.02 \\
-Factor study & 6 frozen movies, 60 questions & Fixed semantic evaluator, same movie evidence and answerer \\
-Source study & 14 movies, 141 questions & Fixed semantic evaluator, shared evidence and questions \\
-\bottomrule
-\end{tabular}
-
-\small\textbf{Table 1.} Evaluation sets and scoring protocol.
-\end{center}
-
 \section{Results}
 
 \begin{center}

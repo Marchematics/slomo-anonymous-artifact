@@ -57,15 +57,6 @@ answers.
 The no-frame, Target16, and Dense48 conditions quantify the visual
 configurations around the shared movie context.
 
-## Evaluation Protocol
-
-- Final leaderboard: 50 movies and 538 questions, scored by the official SLoMO
-  evaluation.
-- Factor study: six frozen movies and 60 questions, scored with a fixed
-  Qwen3-VL-32B semantic evaluator.
-- Source study: 14 movies and 141 questions, with shared evidence and question
-  sets for each source, scored with the same fixed evaluator.
-
 ## Public Sources
 
 - SLoMO Workshop and Challenge: <https://slomo-workshop.github.io/eccv2026/>
