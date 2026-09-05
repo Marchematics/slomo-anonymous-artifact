@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Create the two evidence-bound vector charts used by the ECCV document."""
+"""Create the evidence-bound vector charts used by the technical report."""
 
 from __future__ import annotations
 
@@ -29,19 +29,19 @@ def style(ax) -> None:
 
 def progress() -> None:
     values = DATA["official_progress"]["correct"]
-    labels = DATA["official_progress"]["labels"]
-    fig, ax = plt.subplots(figsize=(6.55, 2.35))
+    labels = ["Baseline", "Movie batch", "Complement", "Protected"]
+    fig, ax = plt.subplots(figsize=(6.3, 2.1))
     x = list(range(len(values)))
     ax.plot(x, values, color=BLUE, marker="o", linewidth=2.2, markersize=5)
     ax.fill_between(x, values, [260] * len(values), color=BLUE, alpha=0.08)
     for index, value in enumerate(values):
-        ax.annotate(f"{value}/538", (index, value), xytext=(0, 9), textcoords="offset points", ha="center", fontsize=8, color="#111827")
+        ax.annotate(f"{value}/538", (index, value), xytext=(0, 8), textcoords="offset points", ha="center", fontsize=8, color="#111827")
     ax.set_xticks(x, labels)
     ax.set_ylim(255, 350)
     ax.set_ylabel("Correct predictions", fontsize=8)
     ax.set_xlabel("System stage", fontsize=8)
     style(ax)
-    fig.tight_layout(pad=0.6)
+    fig.tight_layout(pad=0.5)
     fig.savefig(ROOT / "figures" / "official_progress.pdf", bbox_inches="tight")
     plt.close(fig)
 
@@ -49,18 +49,18 @@ def progress() -> None:
 def factors() -> None:
     values = DATA["factor_audit"]["correct"]
     labels = DATA["factor_audit"]["labels"]
-    fig, ax = plt.subplots(figsize=(6.55, 2.65))
+    fig, ax = plt.subplots(figsize=(6.3, 2.45))
     y = list(range(len(values)))
     colors = [BLUE, GREY, GREY, ORANGE, ORANGE, ORANGE]
     bars = ax.barh(y, values, color=colors, height=0.62)
     for bar, value in zip(bars, values):
-        ax.text(value + 0.45, bar.get_y() + bar.get_height() / 2, f"{value}/60", va="center", fontsize=8, color="#111827")
+        ax.text(value + 0.4, bar.get_y() + bar.get_height() / 2, f"{value}/60", va="center", fontsize=8, color="#111827")
     ax.set_yticks(y, labels)
     ax.invert_yaxis()
     ax.set_xlim(0, 35)
-    ax.set_xlabel("Semantic-correct answers", fontsize=8)
+    ax.set_xlabel("Semantically correct answers", fontsize=8)
     style(ax)
-    fig.tight_layout(pad=0.6)
+    fig.tight_layout(pad=0.5)
     fig.savefig(ROOT / "figures" / "factor_audit.pdf", bbox_inches="tight")
     plt.close(fig)
 

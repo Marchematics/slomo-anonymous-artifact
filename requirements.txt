@@ -8,3 +8,4 @@ transformers>=4.45
 accelerate>=0.34
 qwen-vl-utils>=0.0.8
 bitsandbytes>=0.43
+matplotlib>=3.8

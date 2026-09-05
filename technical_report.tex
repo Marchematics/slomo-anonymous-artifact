@@ -1,0 +1,138 @@
+\documentclass[10pt]{article}
+\usepackage[margin=0.78in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{caption}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage[hidelinks]{hyperref}
+
+\hypersetup{
+  pdftitle={SLoMO Technical Report: Movie-Level Joint Inference},
+  pdfauthor={Anonymous Reproducibility Artifact}
+}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{4pt}
+\setlist{nosep,leftmargin=1.25em}
+\setlist[itemize]{topsep=2pt}
+\renewcommand{\arraystretch}{1.08}
+\pagestyle{plain}
+
+\begin{document}
+
+\begin{center}
+  {\Large\bfseries SLoMO Technical Report}\\[4pt]
+  {\large Movie-Level Joint Inference for Long-Video QA}\\[5pt]
+  {\small Reproducibility documentation and implementation notes}
+\end{center}
+
+\section*{System Overview}
+
+The system answers open-ended questions about short films. Its basic unit is
+the movie rather than the individual question: all questions for one film are
+answered in a shared multimodal context. This preserves information that is
+otherwise difficult to recover independently, including aliases, changing
+relationships, event order, causes, and the ending state.
+
+The artifact releases the executable inference and submission utilities,
+configuration guidance, tests, chart data, and this report. Videos, subtitles,
+model weights, generated answers, credentials, account identifiers, and
+evaluation records remain external inputs.
+
+\section*{Method}
+
+For movie $m$, let $E_m$ denote the shared evidence and $Q_m$ its complete
+question set. The runner makes one request and receives one answer bank:
+\[
+  (E_m,Q_m) \longrightarrow
+  \{a_{m,1},a_{m,2},\ldots,a_{m,n_m}\}.
+\]
+The evidence packet contains a timestamped transcript and a chronological
+frame pack. The prompt asks for concise, evidence-supported English answers
+with exact question IDs. It requires the model to maintain cross-question
+consistency and forbids unsupported visual details.
+
+Frames are sampled in chronological order, resized to a fixed maximum side,
+JPEG encoded, and marked with their timestamps. Long transcripts use a
+deterministic head-and-tail bound. The model is accessed through an
+OpenAI-compatible Responses endpoint; the credential is read from an
+environment variable at runtime.
+
+\begin{center}
+  \includegraphics[width=.82\linewidth]{figures/official_progress.pdf}
+  \captionof{figure}{Historical official score chain recorded in the project audit. The large discontinuity coincides with the movie-batched multimodal answer source; later parent-preserving changes are smaller.}
+\end{center}
+
+The chart is a historical reference, not a claim that the released artifact
+reproduces every upstream service state. It motivates the movie-level answer
+bank interface used by the runner.
+
+\newpage
+
+\section*{Inference Pipeline}
+
+The deterministic pipeline groups rows by \texttt{video\_id}, parses timestamped
+subtitle cues, samples chronological frames, sends one request with all movie
+questions, and validates the complete JSON bank before persistence. The final
+conversion writes the competition CSV. Missing IDs, empty answers, malformed
+JSON, and incomplete movie banks are errors; partial responses are never merged.
+
+\section*{Reproducibility}
+
+\begin{center}
+\begin{tabular}{ll}
+\toprule
+Component & Fixed setting \\
+\midrule
+Context unit & One movie, all questions jointly \\
+Evidence & Timestamped transcript + 16 chronological JPEG frames \\
+Frame encoding & Maximum side 512 px; JPEG quality 82 \\
+Generation & Temperature 0; high reasoning effort \\
+Output & JSON answer bank; CSV \texttt{question\_id,prediction} \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Example execution is documented in \texttt{README.md}. The audit checks the
+header, exact ID coverage, uniqueness, and non-empty predictions. Public and
+private splits are supplied separately.
+
+\section*{Results and Ablations}
+
+Figure~2 reports a frozen six-movie, 60-question local diagnostic using one
+semantic evaluator. Joint answering reaches 27/60, independent calls 18/60,
+no frames 24/60, Target16 29/60, and Dense48 30/60. The results support joint
+context and bound simple frame-budget changes.
+
+\begin{center}
+  \includegraphics[width=.70\linewidth]{figures/factor_audit.pdf}
+  \captionof{figure}{Frozen factor and visual-ceiling diagnostic on six movies. Blue marks the direct reference; gray and orange bars are controlled variants. These are local diagnostics, not official leaderboard scores.}
+\end{center}
+
+\section*{Limitations}
+
+The method depends on transcript quality, visual coverage, endpoint behavior,
+and context budget. Data and weights are external inputs, and endpoint
+availability is not guaranteed. Reproduction requires authorized access and
+the included schema audit.
+
+\clearpage
+
+\section*{References and Public Sources}
+
+\begin{enumerate}
+  \item SLoMO Workshop and Challenge Page.\\
+  \url{https://slomo-workshop.github.io/eccv2026/}
+  \item EvalAI Evaluation Platform.\\
+  \url{https://eval.ai/}
+  \item SF20K Dataset Landing Page.\\
+  \url{https://huggingface.co/datasets/rghermi/sf20k}
+\end{enumerate}
+
+The live competition page and evaluation service are authoritative for current
+deadlines, phases, metadata fields, and upload rules. The report describes the
+artifact interface and the recorded evidence available at release time.
+
+\end{document}
