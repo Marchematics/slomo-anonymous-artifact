@@ -16,7 +16,7 @@
 \setlength{\tabcolsep}{3pt}
 \renewcommand{\arraystretch}{0.9}
 \newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
-\raggedbottom
+\flushbottom
 
 \begin{document}
 
@@ -53,7 +53,9 @@ Our system treats each film as one context unit and produces one coherent
 answer bank for its complete question set. Timestamped ASR, chronological
 visual observations, and all same-movie questions are assembled into one joint
 request; the answerer returns a question-ID keyed JSON bank for conversion to
-the submission CSV.
+the submission CSV. Each request carries the movie ID, evidence packet, and
+complete question set. The returned bank preserves the original IDs and forms
+the complete submission unit for that movie.
 
 \begin{center}
 \small
@@ -86,6 +88,11 @@ zero-shot request. It silently builds a fact ledger and timeline before
 returning concise JSON answers with temperature 0, high reasoning effort, and a
 5,000-token budget.
 
+The textual packet places the timestamped transcript before the question list.
+The 16 JPEG images follow in chronological order, each with its timestamp. The
+response parser normalizes one concise answer for every requested question ID,
+so a complete answer bank is available directly to the submission writer.
+
 \section{Results}
 
 \begin{center}
@@ -96,9 +103,22 @@ returning concise JSON answers with temperature 0, high reasoning effort, and a
   common 141-question overlap set. Values are correct answers.
 \end{center}
 
-Joint movie answering yields 27/60 versus 18/60 for independent calls. The
-141-question source study selects GPT-5.6-Luna at 74 correct answers, above
-Qwen3-VL Flash, Qwen-VL Plus, Qwen3.8-Max, and Kimi-K3.
+The final system answers 357 of 538 questions and ranks first at 66.36\%
+accuracy with a 3.02 score. Figure~1(a) tracks the progression from 269 to
+339, 341, and 357 correct answers as the movie-level answer bank becomes the
+final prediction source.
+
+Joint movie answering reaches 27/60, compared with 18/60 for independent
+calls. The no-frame condition reaches 24/60, chronological frames reach 27/60,
+and Target16 and Dense48 reach 29/60 and 30/60. These conditions isolate the
+contribution of shared movie context and visual evidence allocation under the
+same answerer.
+
+On the common 141-question overlap set, GPT-5.6-Luna reaches 74 correct
+answers. Qwen3-VL Flash and Qwen-VL Plus each reach 66, Qwen3.8-Max reaches 62,
+and Kimi-K3 reaches 59. All answers for a film are generated in one response,
+retaining entity names, relationship states, event order, and ending state in
+one shared context before mapping the bank to official submission rows.
 
 \clearpage
 \bibliographystyle{splncs04}
