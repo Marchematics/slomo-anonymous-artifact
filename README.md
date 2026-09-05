@@ -92,7 +92,6 @@ The live requirements are documented at:
 - `docs/technical_report.md`: Markdown version of the report;
 - `figures/figure_data.json`: traceable chart data;
 - `figures/evidence_dashboard.pdf`: compact five-panel vector evidence figure;
-- `figures/system_architecture.pdf`: movie-level joint-inference architecture;
 - `references.bib`: verified bibliography for the technical report;
 - `scripts/make_report_figures.py`: deterministic PDF chart generator.
 

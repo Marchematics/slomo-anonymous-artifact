@@ -1,7 +1,5 @@
 # Movie-Level Joint Inference for Open-Ended Long-Video QA
 
-Jiahao Zhang, Xinling Wen, and Yu Chen
-
 ## System Overview
 
 The movie is the unit of context: all questions for one film are answered in a
