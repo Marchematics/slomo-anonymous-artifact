@@ -94,9 +94,12 @@ are part of the release tree.
 - `scripts/prepare_evalai_submission.py`: official CSV conversion and schema
   validation;
 - `scripts/audit_submission.py`: local coverage and non-empty-row audit;
-- `technical_report.tex`: clean technical report with a two-page body and
-  public sources beginning on page 3;
-- `technical_report.pdf`: rendered technical report;
+- `technical_report.tex`: clean technical report using the ECCV style files;
+- `technical_report.pdf`: two-page ECCV-styled technical report;
 - `docs/technical_report.md`: Markdown version of the report;
 - `figures/figure_data.json`: traceable chart data;
 - `scripts/make_report_figures.py`: deterministic PDF chart generator.
+
+The report uses the ECCV style files for typography and page geometry, but it
+is a technical/reproducibility document rather than an ECCV submission: it has
+no paper ID, review line numbers, submission metadata, or author block.

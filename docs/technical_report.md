@@ -1,5 +1,9 @@
 # SLoMO Technical Report
 
+The PDF uses the ECCV style files for typography and page geometry. It is a
+technical/reproducibility document, not an ECCV submission template: there is
+no paper ID, review line numbering, or submission metadata.
+
 ## System Overview
 
 This artifact documents an open-ended question answering system for short
