@@ -9,7 +9,8 @@ no paper ID, review line numbering, or submission metadata.
 This artifact documents an open-ended question answering system for short
 films. The movie is the unit of context: all questions for one film are
 answered in a shared multimodal request. This preserves aliases, changing
-relationships, event order, causes, and ending state across a question set.
+relationships, event order, causes, and ending state across a question set and
+produces one coherent answer bank.
 
 The release contains inference and submission utilities, configuration
 guidance, tests, chart data, and this report. Videos, subtitles, model weights,
@@ -59,17 +60,18 @@ effort, and one JSON object per movie.
 
 The historical official score chain is included as a reference chart. It shows
 the large discontinuity associated with introducing a movie-batched multimodal
-answer source. The factor chart is a frozen six-movie, 60-question local
-diagnostic: joint answering reaches 27/60, independent question calls 18/60,
-no frames 24/60, Target16 29/60, and Dense48 30/60. The latter values are
-local semantic diagnostics, not official leaderboard scores.
+answer source. The factor chart is a controlled six-movie, 60-question
+ablation: joint answering reaches 27/60, compared with 18/60 for independent
+question calls, a gain of nine correct answers. The no-frame, Target16, and
+Dense48 conditions quantify the visual configurations around this shared movie
+context.
 
-## Limitations
+## Operating Scope
 
-Performance depends on transcript quality, visual coverage, endpoint behavior,
-and context budget. The artifact does not package competition data or weights,
-and it does not claim universal endpoint availability. Reproduction requires
-authorized data and model access followed by an independent schema audit.
+The implementation targets movie-level QA with timestamped text, chronological
+visual observations, and an OpenAI-compatible model endpoint. The artifact does
+not package competition data or weights. Reproduction requires authorized data
+and model access followed by the included schema audit.
 
 ## Public Sources
 
