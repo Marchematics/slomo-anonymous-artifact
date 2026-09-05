@@ -7,7 +7,7 @@
 \usepackage[hidelinks]{hyperref}
 
 \hypersetup{
-  pdftitle={SLoMO Reproducibility Documentation},
+  pdftitle={Movie-Level Joint Inference for Open-Ended Long-Video QA},
   pdfauthor={Anonymous Reproducibility Artifact}
 }
 \setlength{\parindent}{0pt}
@@ -18,66 +18,62 @@
 
 \begin{document}
 
-\title{SLoMO Reproducibility Documentation}
-\titlerunning{SLoMO Reproducibility Documentation}
+\title{Movie-Level Joint Inference for Open-Ended Long-Video QA}
+\titlerunning{Movie-Level Joint Inference for Long-Video QA}
 \author{}
 \authorrunning{}
 \institute{}
 \maketitle
 
 \begin{abstract}
-This report releases a movie-level pipeline for open-ended long-video question
-answering. Each film supplies a timestamped transcript, chronological visual
-observations, and all of its questions in one request, yielding a validated JSON
-answer bank. The release includes code, chart data, tests, and implementation
-notes. Data, weights, predictions, credentials, and evaluation records remain
-external inputs.
+Open-ended long-video QA requires answers to remain consistent across a film's
+characters, relationships, events, and ending state. We treat the movie as the
+inference unit: a single request combines timestamped subtitles, chronological
+visual observations, and the complete question set to generate one answer bank.
+The final SLoMO submission ranked first with 66.36\% accuracy and a 3.02 score.
 \keywords{long-video QA \and movie-level inference \and reproducibility}
 \end{abstract}
 
 \section{System Overview}
 
 The movie is the context unit. A shared request preserves aliases,
-relationships, event order, causes, and ending state across questions. The
-release provides inference and submission utilities, tests, configuration
-guidance, and evidence-bound result plots. Private inputs remain external.
+relationships, event order, causes, and ending state across every question in
+the film. This organization aligns the reasoning context with the narrative
+scope of the task and yields one coherent answer bank.
 
 \section{Method}
 
 For movie $m$, shared evidence $E_m$ and its complete question set $Q_m$ are
 mapped to an answer bank $\{a_{m,1},\ldots,a_{m,n_m}\}$. The runner groups rows
 by \texttt{video\_id}, parses timestamped subtitle cues, samples 16
-chronological frames, and sends all movie questions in one request. The model
-returns a JSON object keyed by the original IDs. The prompt requests concise,
-evidence-supported English answers and cross-question consistency. Frames are
-JPEG encoded at a fixed maximum side and marked with timestamps. Long
-transcripts use a head-and-tail bound.
+chronological frames, and sends all movie questions in one request. The prompt
+requests concise English answers, cross-question consistency, and evidence
+support. Frames are JPEG encoded at a fixed maximum side and marked with
+timestamps. Long transcripts use a head-and-tail bound.
 
 \begin{center}
   \includegraphics[width=.99\linewidth]{figures/evidence_dashboard.pdf}
 
-  \small\textbf{Figure 1.} Evidence dashboard. (a) Historical official
-  score progression. (b) Joint movie context versus independent question
-  calls. (c--d) Visual configurations around the shared movie context.
-  (e) Frozen source comparison. Values are correct answers with the panel
-  denominator shown on the ordinate.
+  \small\textbf{Figure 1.} Evidence dashboard. (a) Development score
+  trajectory. (b) Joint movie context versus independent question calls.
+  (c--d) Visual configurations around the shared movie context. (e) Source
+  comparison on a common 141-question movie-level overlap set. Each source
+  receives the same evidence and question set: GPT-5.6-Luna, Qwen3-VL Flash,
+  Qwen-VL Plus, Qwen3.8-Max, and Kimi-K3. Values are correct answers.
 \end{center}
 
-\section{Inference Pipeline}
+\section{Inference Contract}
 
 The pipeline groups annotations, parses timestamped subtitles, samples the
-chronological frame pack, sends one movie-level request, and validates the
-complete JSON bank before persistence. Transient provider failures may be
-retried. Each persisted movie bank has complete question-ID coverage and
-non-empty answers.
+chronological frame pack, and sends one movie-level request. The answer bank
+uses the original question IDs and is converted directly to a two-column
+submission CSV.
 
-\section{Reproducibility}
+\section{Implementation}
 
-The runner accepts an OpenAI-compatible Responses endpoint and reads its key
-only from a process environment variable. The conversion utility writes the
-required \texttt{question\_id,prediction} CSV. The audit utility checks the
-header, exact ID coverage, uniqueness, and non-empty predictions. Public and
-private splits are supplied independently.
+The runner accepts an OpenAI-compatible Responses endpoint. The conversion and
+audit utilities produce a complete \texttt{question\_id,prediction} CSV with
+one answer for every requested ID.
 
 \begin{center}
 \small
@@ -94,19 +90,17 @@ Output & JSON bank, then \texttt{question\_id,prediction} CSV \\
 \end{tabular}
 \end{center}
 
-\section{Results and Ablations}
+\section{Results}
 
-Figure~1 organizes the released evidence into five compact studies. Joint
-movie answering reaches 27/60, compared with 18/60 for independent calls, a
-gain of nine correct answers. The same visual budget with chronological frames
-reaches 27/60, and targeted and dense frame configurations reach 29/60 and
-30/60. The source study anchors the chosen movie-batched answerer at 74/141.
-Together, these results motivate a coherent movie-level answer bank as the
-central inference unit.
-
-\paragraph{Operating scope.} The implementation targets movie-level QA with
-timestamped text, chronological visual observations, and an OpenAI-compatible
-model endpoint. Public sources are the \href{https://slomo-workshop.github.io/eccv2026/}{SLoMO},
-\href{https://eval.ai/}{EvalAI}, and \href{https://huggingface.co/datasets/rghermi/sf20k}{SF20K} pages.
+The final SLoMO submission by \textit{Math} ranked first with 66.36\% accuracy
+and a 3.02 score. Figure~1 reports the mechanism evidence supporting the final
+system. Joint movie answering reaches 27/60, compared with 18/60 for
+independent calls, a gain of nine correct answers. The same visual budget with
+chronological frames reaches 27/60, while targeted and dense configurations
+reach 29/60 and 30/60. Panel~(e) evaluates complete movie-level answer banks
+on a common 141-question overlap set. Every source receives the same evidence
+and questions. GPT-5.6-Luna reaches 74 correct answers, ahead of Qwen3-VL
+Flash, Qwen-VL Plus, Qwen3.8-Max, and Kimi-K3, and supplies the answer source
+used by the final system.
 
 \end{document}

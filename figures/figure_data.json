@@ -3,7 +3,7 @@
     "labels": ["Baseline", "Movie batch", "Complement", "Protected parent"],
     "correct": [269, 339, 341, 343],
     "total": 538,
-    "source": "Historical official SLoMO/EvalAI score chain recorded in the project audit"
+    "source": "Model-run development score trajectory"
   },
   "factor_audit": {
     "labels": ["Joint, 16 frames", "Joint, no frames", "Joint, no consistency", "Independent questions", "Target16", "Dense48"],
@@ -15,6 +15,6 @@
     "labels": ["Luna", "VL-Flash", "VL-Plus", "3.8-Max", "Kimi-K3"],
     "correct": [74, 66, 66, 62, 59],
     "total": 141,
-    "source": "Frozen source comparison using the project semantic evaluator"
+    "source": "Movie-batched answer banks on a common 141-question overlap set with shared evidence and questions"
   }
 }

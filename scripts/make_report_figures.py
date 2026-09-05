@@ -88,7 +88,7 @@ def progress(ax) -> None:
         )
     ax.set_xticks(x, labels)
     ax.set_ylabel("Correct / 538")
-    panel_title(ax, "a", "Official progression")
+    panel_title(ax, "a", "Development trajectory")
     style(ax, ylim=(258, 352), ticks=[270, 310, 350])
 
 
@@ -158,7 +158,7 @@ def dashboard() -> None:
         source["correct"],
         [BLUE, GREY, GREY, GREY, GREY],
         label="e",
-        title="Source study",
+        title="Source study (141Q)",
         ylim=(0, 82),
         ticks=[0, 40, 80],
         ylabel="Correct / 141",

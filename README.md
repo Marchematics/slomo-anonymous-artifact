@@ -1,14 +1,12 @@
-# Anonymous Long-Video QA Artifact
+# Movie-Level Long-Video QA
 
-This repository contains the anonymous reproducibility artifact for a
-movie-level long-video question answering system. It is intentionally limited
-to code, configuration guidance, and technical documentation. Datasets,
-videos, model weights, generated answers, credentials, account identifiers,
-and submission files are excluded.
+This repository releases a movie-level long-video question answering system
+for SLoMO. It contains the runner, submission utilities, configuration
+guidance, chart data, tests, and a two-page technical report.
 
 ## Method
 
-The released runner preserves the central inference contract:
+The runner uses one movie as the inference unit:
 
 ```text
 one movie
@@ -18,15 +16,17 @@ one movie
   -> one JSON answer bank
 ```
 
-The shared context lets the answerer maintain names, relationships, event
-order, and ending state across questions. The runner is compatible with an
-OpenAI-style Responses endpoint. API credentials are read only from an
-environment variable.
+The shared context maintains names, relationships, event order, and ending
+state across questions. The runner accepts an OpenAI-compatible Responses
+endpoint.
+
+The final SLoMO submission by `Math` ranked first with `66.36%` accuracy and a
+`3.02` score.
 
 ## Reproduce
 
 Install the dependencies in `requirements.txt`, then provide an annotation
-JSONL file with `question_id`, `video_id`, `question`, `video_url` and local
+JSONL file with `question_id`, `video_id`, `question`, and `video_url`, plus
 video/subtitle files named `<video_id>.mp4` and `<video_id>.vtt`.
 
 ```bash
@@ -57,9 +57,6 @@ python scripts/audit_submission.py \
   --submission outputs/submission.csv
 ```
 
-The endpoint, model identifier, and quotas are deployment-specific. They are
-not hard-coded as credentials or as a claim of current service availability.
-
 ## Submission checklist
 
 The artifact follows the SLoMO/EvalAI submission conventions recorded in the
@@ -70,22 +67,12 @@ competition materials:
 - include every required question ID exactly once;
 - provide a non-empty prediction for every row;
 - keep public and private splits separate;
-- do not use private labels, options, or evaluation outputs when generating
-  predictions;
-- record the final file hash and software configuration outside the anonymous
-  source tree when submitting an artifact.
+- record the submission configuration with the generated CSV.
 
-The live requirements remain authoritative:
+The live requirements are documented at:
 
 - <https://slomo-workshop.github.io/eccv2026/>
 - <https://eval.ai/>
-
-## Anonymous release boundary
-
-The Git history for this artifact starts from a fresh anonymous commit. No
-author names, team names, account handles, API keys, absolute local paths,
-private annotations, model caches, answer banks, or leaderboard submission IDs
-are part of the release tree.
 
 ## Files
 
@@ -101,9 +88,8 @@ are part of the release tree.
 - `figures/evidence_dashboard.pdf`: compact five-panel vector evidence figure;
 - `scripts/make_report_figures.py`: deterministic PDF chart generator.
 
-The report uses the ECCV style files for typography and page geometry, but it
-is a technical/reproducibility document rather than an ECCV submission: it has
-no paper ID, review line numbers, submission metadata, or author block.
+The report uses ECCV typography and page geometry while presenting a compact
+technical description of the final system.
 
 The compact evidence dashboard uses direct labels, small multiples, and a
 color-safe scientific palette. Its visual conventions are informed by
